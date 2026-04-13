@@ -1,0 +1,188 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marudev Random</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1d2633;
+      --muted: #6a7687;
+      --primary: #0f62fe;
+      --primary-hover: #0849bd;
+      --border: #d9e1ec;
+      --ok: #0f8a5f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: min(860px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(19, 38, 68, 0.08);
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.35rem;
+    }
+
+    p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #generateBtn {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    #generateBtn:hover { background: var(--primary-hover); }
+
+    #status {
+      font-size: 0.9rem;
+      color: var(--ok);
+      min-height: 1.2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px;
+    }
+
+    .item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+    }
+
+    .value {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .copy-btn {
+      background: #eaf1ff;
+      color: #123a94;
+      padding: 7px 10px;
+      font-size: 0.82rem;
+    }
+
+    .copy-btn:hover { background: #d9e7ff; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>Fancy Random Password</h1>
+
+    <div class="toolbar">
+      <button id="generateBtn" type="button">Tạo random</button>
+      <div id="status"></div>
+    </div>
+
+    <section id="list" class="grid" aria-live="polite"></section>
+  </main>
+
+  <script>
+    const generateBtn = document.getElementById('generateBtn');
+    const list = document.getElementById('list');
+    const statusEl = document.getElementById('status');
+
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@()?';
+
+    function randomText(length = 6) {
+      let out = '';
+      for (let i = 0; i < length; i++) {
+        out += alphabet[Math.floor(Math.random() * alphabet.length)];
+      }
+      return out;
+    }
+
+    function makeValue() {
+      return `Fancy${randomText(6)}`;
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        statusEl.textContent = `Đã copy: ${text}`;
+      } catch {
+        statusEl.textContent = 'Không copy được tự động. Hãy copy thủ công.';
+      }
+    }
+
+    function renderItems() {
+      list.innerHTML = '';
+      statusEl.textContent = '';
+
+      for (let i = 0; i < 10; i++) {
+        const value = makeValue();
+
+        const item = document.createElement('article');
+        item.className = 'item';
+
+        const valueEl = document.createElement('div');
+        valueEl.className = 'value';
+        valueEl.textContent = value;
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.type = 'button';
+        copyBtn.textContent = 'Copy';
+        copyBtn.addEventListener('click', () => copyText(value));
+
+        item.append(valueEl, copyBtn);
+        list.appendChild(item);
+      }
+    }
+
+    generateBtn.addEventListener('click', renderItems);
+
+    // Tạo sẵn lần đầu cho tiện dùng.
+    renderItems();
+  </script>
+</body>
+</html>
+
+
